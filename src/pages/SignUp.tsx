@@ -7,6 +7,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Link, useNavigate } from "react-router-dom";
 import { ShoppingCart } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
+import { api } from "@/lib/api";
 
 const SignUp = () => {
   const [activeTab, setActiveTab] = useState("vendor");
@@ -18,39 +19,40 @@ const SignUp = () => {
     name: "",
     email: "",
     phone: "",
-    password: "",
-    businessName: "",
-    location: ""
+    password: ""
   });
 
   const [supplierForm, setSupplierForm] = useState({
     name: "",
     email: "",
     phone: "",
-    password: "",
-    companyName: "",
-    categories: "",
-    licenseInfo: ""
+    password: ""
   });
 
   const handleVendorSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setIsLoading(true);
-    
     try {
-      // TODO: Replace with actual API call
-      await new Promise(resolve => setTimeout(resolve, 1000));
-      
+      const payload = {
+        name: vendorForm.name,
+        email: vendorForm.email,
+        phone: vendorForm.phone,
+        password: vendorForm.password,
+        role: "vendor"
+      };
+      const response = await api.signUp(payload);
+      if (response.token) {
+        localStorage.setItem("authToken", response.token);
+      }
       toast({
         title: "Success!",
         description: "Vendor account created successfully.",
       });
-      
       navigate("/vendor/dashboard");
-    } catch (error) {
+    } catch (error: any) {
       toast({
         title: "Error",
-        description: "Failed to create account. Please try again.",
+        description: error.message || "Failed to create account. Please try again.",
         variant: "destructive",
       });
     } finally {
@@ -61,21 +63,27 @@ const SignUp = () => {
   const handleSupplierSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setIsLoading(true);
-    
     try {
-      // TODO: Replace with actual API call
-      await new Promise(resolve => setTimeout(resolve, 1000));
-      
+      const payload = {
+        name: supplierForm.name,
+        email: supplierForm.email,
+        phone: supplierForm.phone,
+        password: supplierForm.password,
+        role: "supplier"
+      };
+      const response = await api.signUp(payload);
+      if (response.token) {
+        localStorage.setItem("authToken", response.token);
+      }
       toast({
         title: "Success!",
         description: "Supplier account created successfully.",
       });
-      
       navigate("/supplier/dashboard");
-    } catch (error) {
+    } catch (error: any) {
       toast({
         title: "Error",
-        description: "Failed to create account. Please try again.",
+        description: error.message || "Failed to create account. Please try again.",
         variant: "destructive",
       });
     } finally {
@@ -143,28 +151,6 @@ const SignUp = () => {
                   </div>
                   
                   <div className="space-y-2">
-                    <Label htmlFor="vendor-business">Business Name</Label>
-                    <Input
-                      id="vendor-business"
-                      placeholder="Enter your business name"
-                      value={vendorForm.businessName}
-                      onChange={(e) => setVendorForm({...vendorForm, businessName: e.target.value})}
-                      required
-                    />
-                  </div>
-                  
-                  <div className="space-y-2">
-                    <Label htmlFor="vendor-location">Location</Label>
-                    <Input
-                      id="vendor-location"
-                      placeholder="Enter your location"
-                      value={vendorForm.location}
-                      onChange={(e) => setVendorForm({...vendorForm, location: e.target.value})}
-                      required
-                    />
-                  </div>
-                  
-                  <div className="space-y-2">
                     <Label htmlFor="vendor-password">Password</Label>
                     <Input
                       id="vendor-password"
@@ -214,28 +200,6 @@ const SignUp = () => {
                       placeholder="Enter your phone number"
                       value={supplierForm.phone}
                       onChange={(e) => setSupplierForm({...supplierForm, phone: e.target.value})}
-                      required
-                    />
-                  </div>
-                  
-                  <div className="space-y-2">
-                    <Label htmlFor="supplier-company">Company Name</Label>
-                    <Input
-                      id="supplier-company"
-                      placeholder="Enter your company name"
-                      value={supplierForm.companyName}
-                      onChange={(e) => setSupplierForm({...supplierForm, companyName: e.target.value})}
-                      required
-                    />
-                  </div>
-                  
-                  <div className="space-y-2">
-                    <Label htmlFor="supplier-categories">Supply Categories</Label>
-                    <Input
-                      id="supplier-categories"
-                      placeholder="e.g., Vegetables, Spices, Grains"
-                      value={supplierForm.categories}
-                      onChange={(e) => setSupplierForm({...supplierForm, categories: e.target.value})}
                       required
                     />
                   </div>

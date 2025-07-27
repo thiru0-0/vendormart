@@ -3,7 +3,7 @@ import { AppSidebar } from "@/components/AppSidebar";
 import { ShoppingCart, LogOut } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Link, useNavigate } from "react-router-dom";
-import { useToast } from "@/hooks/use-toast";
+import { useAuth } from "@/contexts/AuthContext";
 
 interface DashboardLayoutProps {
   children: React.ReactNode;
@@ -12,14 +12,10 @@ interface DashboardLayoutProps {
 
 export function DashboardLayout({ children, userRole }: DashboardLayoutProps) {
   const navigate = useNavigate();
-  const { toast } = useToast();
+  const { logout } = useAuth();
 
   const handleLogout = () => {
-    // TODO: Clear authentication tokens/state
-    toast({
-      title: "Logged out",
-      description: "You have been logged out successfully.",
-    });
+    logout();
     navigate("/");
   };
 

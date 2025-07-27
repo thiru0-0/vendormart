@@ -1,8 +1,29 @@
 import { DashboardLayout } from "@/components/DashboardLayout";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { BarChart3, ShoppingCart, Users, TrendingUp } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import { BarChart3, ShoppingCart, Users, TrendingUp, Search, Package, MessageCircle, User } from "lucide-react";
+import { useNavigate } from "react-router-dom";
 
 const VendorDashboard = () => {
+  const navigate = useNavigate();
+
+  const handleQuickAction = (action: string) => {
+    switch (action) {
+      case 'find-suppliers':
+        navigate('/vendor/suppliers');
+        break;
+      case 'track-orders':
+        navigate('/vendor/orders?status=pending');
+        break;
+      case 'check-messages':
+        navigate('/vendor/chat');
+        break;
+      case 'update-profile':
+        navigate('/vendor/profile');
+        break;
+    }
+  };
+
   return (
     <DashboardLayout userRole="vendor">
       <div className="space-y-6">
@@ -98,18 +119,50 @@ const VendorDashboard = () => {
             </CardHeader>
             <CardContent>
               <div className="space-y-2">
-                <button className="w-full text-left p-2 rounded hover:bg-muted text-sm">
-                  🔍 Find new suppliers
-                </button>
-                <button className="w-full text-left p-2 rounded hover:bg-muted text-sm">
-                  📦 Track pending orders
-                </button>
-                <button className="w-full text-left p-2 rounded hover:bg-muted text-sm">
-                  💬 Check messages
-                </button>
-                <button className="w-full text-left p-2 rounded hover:bg-muted text-sm">
-                  ⚙️ Update profile
-                </button>
+                <Button
+                  variant="ghost"
+                  className="w-full justify-start h-auto p-3"
+                  onClick={() => handleQuickAction('find-suppliers')}
+                >
+                  <Search className="mr-3 h-4 w-4" />
+                  <div className="text-left">
+                    <div className="font-medium">Find new suppliers</div>
+                    <div className="text-xs text-muted-foreground">Discover new suppliers for your business</div>
+                  </div>
+                </Button>
+                <Button
+                  variant="ghost"
+                  className="w-full justify-start h-auto p-3"
+                  onClick={() => handleQuickAction('track-orders')}
+                >
+                  <Package className="mr-3 h-4 w-4" />
+                  <div className="text-left">
+                    <div className="font-medium">Track pending orders</div>
+                    <div className="text-xs text-muted-foreground">Monitor your order status</div>
+                  </div>
+                </Button>
+                <Button
+                  variant="ghost"
+                  className="w-full justify-start h-auto p-3"
+                  onClick={() => handleQuickAction('check-messages')}
+                >
+                  <MessageCircle className="mr-3 h-4 w-4" />
+                  <div className="text-left">
+                    <div className="font-medium">Check messages</div>
+                    <div className="text-xs text-muted-foreground">View conversations with suppliers</div>
+                  </div>
+                </Button>
+                <Button
+                  variant="ghost"
+                  className="w-full justify-start h-auto p-3"
+                  onClick={() => handleQuickAction('update-profile')}
+                >
+                  <User className="mr-3 h-4 w-4" />
+                  <div className="text-left">
+                    <div className="font-medium">Update profile</div>
+                    <div className="text-xs text-muted-foreground">Manage your account settings</div>
+                  </div>
+                </Button>
               </div>
             </CardContent>
           </Card>

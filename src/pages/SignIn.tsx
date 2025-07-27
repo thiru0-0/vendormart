@@ -3,43 +3,51 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { Link, useNavigate } from "react-router-dom";
+import { Link, useNavigate, useLocation } from "react-router-dom";
 import { ShoppingCart } from "lucide-react";
+import { useAuth } from "@/contexts/AuthContext";
 import { useToast } from "@/hooks/use-toast";
+import { api } from "@/lib/api";
 
 const SignIn = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   const navigate = useNavigate();
+  const location = useLocation();
+  const { login } = useAuth();
   const { toast } = useToast();
+  
+  // Redirect to the page they were trying to access, or their dashboard
+  const from = location.state?.from?.pathname || "/vendor/dashboard";
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setIsLoading(true);
-    
+    console.log('SignIn: handleSubmit called');
+    debugger;
     try {
-      // TODO: Replace with actual API call
-      await new Promise(resolve => setTimeout(resolve, 1000));
-      
-      toast({
-        title: "Success!",
-        description: "You have been signed in successfully.",
-      });
-      
-      // Mock role-based redirect - replace with actual user role from API
-      const mockRole = "vendor"; // This would come from your auth API
-      if (mockRole === "vendor") {
-        navigate("/vendor/dashboard");
-      } else {
-        navigate("/supplier/dashboard");
+      // Test backend connection first
+      const isConnected = await api.testConnection();
+      console.log('SignIn: Backend connection test result:', isConnected);
+      if (!isConnected) {
+        toast({
+          title: "Connection Error",
+          description: "Cannot connect to server. Please ensure the backend is running on port 3001.",
+          variant: "destructive",
+        });
+        setIsLoading(false);
+        return;
       }
+
+      console.log('SignIn: Attempting login with', email);
+      await login(email, password);
+      
+      // Navigate to the page they were trying to access, or their dashboard
+      navigate(from, { replace: true });
     } catch (error) {
-      toast({
-        title: "Error",
-        description: "Invalid credentials. Please try again.",
-        variant: "destructive",
-      });
+      console.log('SignIn: Error during sign-in', error);
+      // Error handling is done in the auth context
     } finally {
       setIsLoading(false);
     }
